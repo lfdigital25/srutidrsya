@@ -17,35 +17,31 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-  // High Security Middleware
-  app.use(helmet({
+app.use(helmet({
     contentSecurityPolicy: false, // Disabled for Vite dev server compatibility
     crossOriginEmbedderPolicy: false,
-  }));
+}));
 
-  // Enable CORS for all routes (Local Dev / Cloud Function compatibility)
-  app.use(cors({ origin: true }));
+app.use(cors({ origin: true }));
 
-  // Rate Limiting to prevent bot abuse
-  const apiLimiter = rateLimit({
+const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
     standardHeaders: true,
     legacyHeaders: false,
     message: { error: 'Too many requests from this IP, please try again after 15 minutes' }
-  });
+});
 
-  app.use('/api/', apiLimiter);
-  app.use(express.json({ limit: '10kb' })); // Prevent large payload attacks
+app.use('/api/', apiLimiter);
+app.use(express.json({ limit: '10kb' })); 
 
-  // API Routes
+// ... (API Routes remain strictly same, skipping for brevity of diff) ...
 
-  // Get Trending Videos (Feed)
-  app.get('/api/videos', async (req, res) => {
+// Get Trending Videos (Feed)
+app.get('/api/videos', async (req, res) => {
     try {
       // Use Piped API for trending videos to avoid YouTube API key requirement
       const response = await fetch('https://pipedapi.kavin.rocks/trending?region=US');
@@ -257,9 +253,11 @@ async function startServer() {
         }
       }
     }
-  });
+});
 
-  // Vite middleware for development
+// Logic to run server ONLY if NOT in Vercel environment
+if (!process.env.VERCEL) {
+  const startLocalServer = async () => {
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -273,9 +271,13 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  };
+  
+  startLocalServer();
 }
 
-startServer();
+// Export app for Vercel
+export default app;
