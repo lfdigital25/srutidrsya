@@ -1,4 +1,4 @@
-const { onRequest } = require("firebase-functions/v2/https");
+// const { onRequest } = require("firebase-functions/v2/https");
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -211,4 +211,4 @@ app.get('/api/search', async (req, res) => {
 // Export for Vercel (Serverless Function)
 module.exports = app;
 // Attach for Firebase (Cloud Function) compatibility
-module.exports.api = onRequest({}, app);
+// module.exports.api = onRequest({}, app);
