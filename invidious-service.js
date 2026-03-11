@@ -1,11 +1,11 @@
-const axios = require('axios');
-const NodeCache = require('node-cache');
+import axios from 'axios';
+import NodeCache from 'node-cache';
 
 // simple in-memory cache for a few minutes
 const cache = new NodeCache({ stdTTL: 300 });
 const API = 'https://vid.puffyan.us/api/v1';
 
-module.exports = {
+export default {
   async search(query) {
     const key = `search_${query}`;
     if (cache.has(key)) return cache.get(key);
