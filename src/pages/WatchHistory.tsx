@@ -2,42 +2,21 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Clock, Trash2, ArrowLeft } from 'lucide-react';
 import { HistoryService, WatchHistoryItem } from '../services/HistoryService';
-import { auth } from '../firebase';
-import { onAuthStateChanged } from 'firebase/auth';
 
 export default function WatchHistory() {
   const [history, setHistory] = useState<WatchHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        HistoryService.getHistory().then(data => {
-          setHistory(data);
-          setLoading(false);
-        });
-      } else {
-        setLoading(false);
-      }
-    });
-    return () => unsubscribe();
+    const historyData = HistoryService.getHistory();
+    setHistory(historyData);
+    setLoading(false);
   }, []);
 
   const formatDuration = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return `${m}:${s.toString().padStart(2, '0')}`;
-  };
-
-  if (!user) {
-    return (
-      <div className="p-4 flex flex-col items-center justify-center h-full text-neutral-400">
-        <p>Please sign in to view your watch history.</p>
-        <Link to="/profile" className="mt-4 text-red-500 hover:text-red-400">Go to Profile</Link>
-      </div>
-    );
   }
 
   return (
@@ -73,7 +52,7 @@ export default function WatchHistory() {
                 <h3 className="text-neutral-100 font-semibold line-clamp-2 group-hover:text-red-500 transition-colors">{video.title}</h3>
                 <p className="text-sm text-neutral-400 mt-1">{video.uploaderId}</p>
                 <p className="text-xs text-neutral-500 mt-1">
-                  Watched on {video.viewedAt.toDate().toLocaleDateString()}
+                  Watched on {new Date(video.viewedAt).toLocaleDateString()}
                 </p>
               </div>
             </Link>
