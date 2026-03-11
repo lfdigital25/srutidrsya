@@ -1,0 +1,32 @@
+{
+  "short_name": "Sruti Drsya",
+  "name": "Sruti Drsya Video Player",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#0a0a0a",
+  "background_color": "#0a0a0a",
+  "shortcuts": [
+    {
+      "name": "Search",
+      "short_name": "Search",
+      "description": "Search for videos",
+      "url": "/search",
+      "icons": [{ "src": "/vite.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Watch History",
+      "short_name": "History",
+      "description": "View your watch history",
+      "url": "/history",
+      "icons": [{ "src": "/vite.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable", "purpose": "any maskable" }]
+    }
+  ]
+}

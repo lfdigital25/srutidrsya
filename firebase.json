@@ -1,0 +1,27 @@
+{
+  "functions": {
+    // point at this repo root where index.js lives
+    "source": ".",
+    "runtime": "nodejs20"
+  },
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      // send api requests to the Cloud Function named "api"
+      {
+        "source": "/api/**",
+        "function": "api"
+      },
+      // otherwise serve the SPA
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

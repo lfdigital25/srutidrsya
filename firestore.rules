@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Watch History Rules
+    match /users/{userId}/history/{document=**} {
+      // Users can only read, create, update, and delete their OWN history
+      allow read, delete: if isOwner(userId);
+      
+      // Validation on create/update to prevent schema pollution
+      allow create, update: if isOwner(userId)
+        && request.resource.data.keys().hasAll(['videoId', 'title', 'thumbnailUrl', 'uploaderId', 'duration', 'viewedAt'])
+        && request.resource.data.videoId is string
+        && request.resource.data.title is string
+        && request.resource.data.thumbnailUrl is string
+        && request.resource.data.uploaderId is string
+        && request.resource.data.duration is number
+        && request.resource.data.viewedAt is timestamp;
+    }
+    
+    // Default deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
