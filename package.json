@@ -32,5 +32,8 @@
     "tailwindcss": "^4.0.0",
     "typescript": "^5.2.2",
     "vite": "^5.1.4"
+  },
+  "overrides": {
+    "glob": "^11.0.0"
   }
 }
